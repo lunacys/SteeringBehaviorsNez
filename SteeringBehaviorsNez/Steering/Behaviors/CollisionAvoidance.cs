@@ -50,7 +50,7 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
             var collision = Physics.Linecast(SteeringEntity.Position, _ahead, 2);
             var mostThreatening = collision.Collider;
 
-            if (mostThreatening != null)
+            if (mostThreatening != null && collision.Collider.Entity != Entity)
             {
                 _avoidance = _ahead - mostThreatening.AbsolutePosition;
                 _avoidance.Normalize();
