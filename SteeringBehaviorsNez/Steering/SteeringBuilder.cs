@@ -34,7 +34,7 @@ namespace SteeringBehaviorsNez.Steering
             _currId++;
         }
 
-        public SteeringBuilder AddBehavior(ISteeringBehavior behavior, Func<ISteeringEntity, ISteeringTarget, bool> condition = null)
+        public SteeringBuilder AddBehavior(ISteeringBehavior behavior, Predicate<ConditionArgs> condition = null)
         {
             var cmp = _entity.AddComponent(behavior as SteeringComponentBase);
             if (_isAnyBehaviorAdded)
@@ -45,6 +45,11 @@ namespace SteeringBehaviorsNez.Steering
 
             _isAnyBehaviorAdded = true;
             return this;
+        }
+
+        public static bool ApproachCircleCondition(ConditionArgs args)
+        {
+            return Vector2.Distance(args.Target.Position, args.Entity.Position) < 6f;
         }
 
         public SteeringBuilder SetPhysicalParams(SteeringPhysicalParams @params)

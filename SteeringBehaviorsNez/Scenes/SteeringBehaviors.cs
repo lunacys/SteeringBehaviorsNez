@@ -251,10 +251,11 @@ namespace SteeringBehaviorsNez.Scenes
 
             var entity = new SteeringBuilder(new Vector2(512, 512))
                 .SetPhysicalParams(_params)
-                .AddBehavior(new Seek(), (steeringEntity, target) =>
+                .AddBehavior(new Seek(), (args) =>
                     {
-                        var length = (target.Position - steeringEntity.Position).Length();
-                        return length <= 300f && length > 5f;
+                        var length = (args.Target.Position  -
+                                      (args.Entity.Position + args.Entity.Velocity * args.Entity.Mass)).Length();
+                        return length > 5f;
                     })
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
@@ -269,7 +270,7 @@ namespace SteeringBehaviorsNez.Scenes
 
             var entity = new SteeringBuilder(new Vector2(512, 512))
                 .SetPhysicalParams(_params)
-                .AddBehavior(new Flee(), (entity, target) => (target.Position - entity.Position).Length() <= 400f)
+                .AddBehavior(new Flee(), (args) => (args.Target.Position - args.Entity.Position).Length() <= 400f)
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
@@ -283,7 +284,7 @@ namespace SteeringBehaviorsNez.Scenes
             
             var entity = new SteeringBuilder(new Vector2(512, 512))
                 .SetPhysicalParams(_params)
-                .AddBehavior(new Arrival(128f))
+                .AddBehavior(new Arrival(128f), args => (args.Target.Position - args.Entity.Position).Length() > 5f)
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
@@ -319,8 +320,17 @@ namespace SteeringBehaviorsNez.Scenes
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
-            
-            var entity = new SteeringBuilder(new Vector2(512, 512), seek)
+
+            SteeringEntity pursuiter = null;
+
+            var evade = new SteeringBuilder(new Vector2(128, 128), pursuiter)
+                .SetPhysicalParams(_params)
+                .AddBehavior(new Evade())
+                .UseDefaultRenderer(_defaultTexture)
+                .AddCollider(12f)
+                .Build();
+
+            pursuiter = new SteeringBuilder(new Vector2(512, 512), seek)
                 .SetPhysicalParams(_params)
                 .AddBehavior(new Pursuit())
                 .UseDefaultRenderer(_defaultTexture)
@@ -328,20 +338,30 @@ namespace SteeringBehaviorsNez.Scenes
                 .Build();
 
             Core.Scene.AddEntity(seek);
-            Core.Scene.AddEntity(entity);
+            // Core.Scene.AddEntity(evade);
+            Core.Scene.AddEntity(pursuiter);
         }
         
         private void AddEvade()
         {
             Debug.Log("Adding Evade");
-            
-            var entity = new SteeringBuilder(new Vector2(512, 512))
+
+            var seek = new SteeringBuilder(new Vector2(128, 128))
+                .SetPhysicalParams(_params)
+                .AddBehavior(new Seek())
+                .UseDefaultRenderer(_defaultTexture)
+                .AddCollider(12f)
+                .Build();
+
+
+            var entity = new SteeringBuilder(new Vector2(512, 512), seek)
                 .SetPhysicalParams(_params)
                 .AddBehavior(new Evade())
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
 
+            Core.Scene.AddEntity(seek);
             Core.Scene.AddEntity(entity);
         }
 

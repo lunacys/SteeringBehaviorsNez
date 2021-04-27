@@ -7,6 +7,6 @@ namespace SteeringBehaviorsNez.Steering
     {
         ISteeringEntity SteeringEntity { get; set; } 
         Vector2 Steer(ISteeringTarget target);
-        Func<ISteeringEntity, ISteeringTarget, bool> Condition { get; set; }
+        Predicate<ConditionArgs> Condition { get; set; }
     }
 }

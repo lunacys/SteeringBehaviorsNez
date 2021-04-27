@@ -69,6 +69,7 @@ namespace SteeringBehaviorsNez.Scenes
         public SteeringManagerComponent(ISteeringTarget steeringTarget = null)
         {
             SteeringTarget = steeringTarget;
+            
         }
 
         public override void Initialize()
@@ -88,6 +89,10 @@ namespace SteeringBehaviorsNez.Scenes
                 if (mouseEntityComponent != null)
                     SteeringTarget = mouseEntityComponent;
             }
+
+            Velocity = Vector2.Zero;
+            Steering = Vector2.Zero;
+            DesiredVelocity = Vector2.Zero;
         }
 
         public void UpdateComponents()
@@ -105,7 +110,9 @@ namespace SteeringBehaviorsNez.Scenes
 
             foreach (var component in _steeringComponents)
             {
-                if (component.Condition != null && component.Condition.Invoke(_steeringEntity, SteeringTarget))
+                if (component.Condition == null || (component.Condition != null &&
+                                                    component.Condition(new ConditionArgs(_steeringEntity,
+                                                        SteeringTarget))))
                 {
                     anyInvokes = true;
                     if (!component.IsAdditive)

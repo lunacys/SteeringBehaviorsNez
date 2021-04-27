@@ -12,7 +12,7 @@ namespace SteeringBehaviorsNez.Steering
         [Inspectable]
         public bool IsAdditive { get; set; }
 
-        public Func<ISteeringEntity, ISteeringTarget, bool> Condition { get; set; }
+        public Predicate<ConditionArgs> Condition { get; set; }
 
         public override void Initialize()
         {
