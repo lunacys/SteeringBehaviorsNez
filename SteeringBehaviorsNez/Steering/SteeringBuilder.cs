@@ -22,7 +22,8 @@ namespace SteeringBehaviorsNez.Steering
             _entity = new SteeringEntity
             {
                 Name = "steering-" + _currId,
-                Position = position
+                Position = position,
+                Tag = 123
             };
 
             var smc = _entity.AddComponent(new SteeringManagerComponent(target));
