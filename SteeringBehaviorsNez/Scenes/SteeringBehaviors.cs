@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Metadata.Ecma335;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -250,7 +251,11 @@ namespace SteeringBehaviorsNez.Scenes
 
             var entity = new SteeringBuilder(new Vector2(512, 512))
                 .SetPhysicalParams(_params)
-                .AddBehavior(new Seek())
+                .AddBehavior(new Seek(), (steeringEntity, target) =>
+                    {
+                        var length = (target.Position - steeringEntity.Position).Length();
+                        return length <= 300f && length > 5f;
+                    })
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
@@ -264,7 +269,7 @@ namespace SteeringBehaviorsNez.Scenes
 
             var entity = new SteeringBuilder(new Vector2(512, 512))
                 .SetPhysicalParams(_params)
-                .AddBehavior(new Flee())
+                .AddBehavior(new Flee(), (entity, target) => (target.Position - entity.Position).Length() <= 400f)
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();

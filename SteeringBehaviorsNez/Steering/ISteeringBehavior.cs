@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace SteeringBehaviorsNez.Steering
 {
@@ -6,5 +7,6 @@ namespace SteeringBehaviorsNez.Steering
     {
         ISteeringEntity SteeringEntity { get; set; } 
         Vector2 Steer(ISteeringTarget target);
+        Func<ISteeringEntity, ISteeringTarget, bool> Condition { get; set; }
     }
 }

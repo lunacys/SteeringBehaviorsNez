@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using ImGuiNET;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
@@ -32,11 +34,14 @@ namespace SteeringBehaviorsNez.Steering
             _currId++;
         }
 
-        public SteeringBuilder AddBehavior(ISteeringBehavior behavior)
+        public SteeringBuilder AddBehavior(ISteeringBehavior behavior, Func<ISteeringEntity, ISteeringTarget, bool> condition = null)
         {
             var cmp = _entity.AddComponent(behavior as SteeringComponentBase);
             if (_isAnyBehaviorAdded)
                 cmp.IsAdditive = true;
+
+            if (condition != null)
+                cmp.Condition = condition;
 
             _isAnyBehaviorAdded = true;
             return this;

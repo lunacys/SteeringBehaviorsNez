@@ -101,14 +101,25 @@ namespace SteeringBehaviorsNez.Scenes
 
         public void Update()
         {
+            bool anyInvokes = false;
+
             foreach (var component in _steeringComponents)
-            { 
-                if (!component.IsAdditive)
-                    Steering = component.Steer(SteeringTarget);
-                else 
-                    Steering += component.Steer(SteeringTarget);
+            {
+                if (component.Condition != null && component.Condition.Invoke(_steeringEntity, SteeringTarget))
+                {
+                    anyInvokes = true;
+                    if (!component.IsAdditive)
+                        Steering = component.Steer(SteeringTarget);
+                    else
+                        Steering += component.Steer(SteeringTarget);
+                }
             }
-            
+
+            if (!anyInvokes)
+            {
+                Steering = -Velocity;
+            }
+
             Steering = MathUtil.Truncate(Steering, MaxForce);
             Steering /= Mass;
 
@@ -117,7 +128,7 @@ namespace SteeringBehaviorsNez.Scenes
             Position += Velocity;
 
             if (Velocity.X != 0 && Velocity.Y != 0)
-                Rotation = MathUtil.TurnToFace(Position, Position + Velocity, Rotation, 0.1f);
+                Rotation = MathUtil.TurnToFace(Position, Position + DesiredVelocity, Rotation, 0.1f);
 
             Vector2 motion = Vector2.Zero;
             CollisionResult result;

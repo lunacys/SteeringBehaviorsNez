@@ -1,14 +1,18 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Nez;
 
 namespace SteeringBehaviorsNez.Steering
 {
     public abstract class SteeringComponentBase : Component, ISteeringBehavior
     {
+        [Inspectable]
         public ISteeringEntity SteeringEntity { get; set; }
         
         [Inspectable]
         public bool IsAdditive { get; set; }
+
+        public Func<ISteeringEntity, ISteeringTarget, bool> Condition { get; set; }
 
         public override void Initialize()
         {
@@ -18,6 +22,7 @@ namespace SteeringBehaviorsNez.Steering
         }
 
         public abstract Vector2 Steer(ISteeringTarget target);
+        
 
         public override void OnRemovedFromEntity()
         {
