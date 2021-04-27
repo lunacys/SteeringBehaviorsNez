@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
 using Nez.ImGuiTools;
+using SteeringBehaviorsNez.Steering;
 
 namespace SteeringBehaviorsNez.Scenes
 {
@@ -28,7 +29,9 @@ namespace SteeringBehaviorsNez.Scenes
             SetDesignResolution(1360, 768, SceneResolutionPolicy.ShowAllPixelPerfect);
             Screen.SetSize(1920, 1080);
 
-            
+            CreateEntity("mouse-entity").AddComponent(new MouseEntityComponent());
+            var path = CreateEntity("path-builder").AddComponent(new PathComponent(new Path()));
+            CreateEntity("sb-base").AddComponent(new SteeringBehaviors(path));
         }
     }
 }

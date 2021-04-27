@@ -32,4 +32,9 @@
       <ProjectReference Include="..\Lib\Nez\Nez.Persistence\Nez.Monogame.Standard.Persistence.csproj" />
       <ProjectReference Include="..\Lib\Nez\Nez.Portable\Nez.Monogame.Standard.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <None Update="Content\NezDefaultBMFont.xnb">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>
