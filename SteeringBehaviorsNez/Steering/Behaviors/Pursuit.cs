@@ -4,16 +4,6 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
 {
     public class Pursuit : SteeringComponentBase
     {
-        private Seek _seek;
-
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            _seek = new Seek();
-            _seek.SteeringEntity = SteeringEntity;
-        }
-
         public override Vector2 Steer(ISteeringTarget target)
         {
             if (target == null)
@@ -27,7 +17,7 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
             else 
                 futurePos = target.Position;
 
-            return _seek.Steer((Vector2SteeringTarget) futurePos);
+            return BehaviorMath.Seek((Vector2SteeringTarget) futurePos, SteeringEntity);
         }
     }
 }

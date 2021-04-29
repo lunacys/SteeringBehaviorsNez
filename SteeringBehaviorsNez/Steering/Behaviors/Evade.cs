@@ -4,17 +4,6 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
 {
     public class Evade : SteeringComponentBase
     {
-        public Flee _flee;
-
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            _flee = new Flee();
-            _flee.SteeringEntity = SteeringEntity;
-            _flee.Initialize();
-        }
-
         public override Vector2 Steer(ISteeringTarget target)
         {
             var distance = (target.Position - SteeringEntity.Position).Length();
@@ -25,7 +14,7 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
             else 
                 futurePos = target.Position;
 
-            return _flee.Steer((Vector2SteeringTarget) futurePos);
+            return BehaviorMath.Flee((Vector2SteeringTarget) futurePos, SteeringEntity);
         }
     }
 }

@@ -422,15 +422,11 @@ namespace SteeringBehaviorsNez.Scenes
             var leaderFollowingBehavior2 = new LeaderFollowing(leader, 64f, 64f, 30);
             var leaderFollowingBehavior3 = new LeaderFollowing(leader, 64f, 64f, 30);
 
-            var evade1 = new Evade();
-            var evade2 = new Evade();
-            var evade3 = new Evade();
-
             // If IsOnLeaderSight => Evade(leader) -> Arrive -> Separation
             var entity = new SteeringBuilder(new Vector2(128, 128), leader)
                 .SetPhysicalParams(_params)
                 .AddBehavior(leaderFollowingBehavior1)
-                .AddBehavior(evade1, args => IsOnLeaderSight(leader, args.Entity,
+                .AddBehavior(new Evade(), args => IsOnLeaderSight(leader, args.Entity,
                         GetLeaderAhead(leader, leaderFollowingBehavior1.LeaderBehindDist),
                         leaderFollowingBehavior1.LeaderSightRadius))
                 .AddBehavior(new Separation(CheckNearestFunc, 50f, 2f) {IsAdditive = true})
@@ -438,29 +434,23 @@ namespace SteeringBehaviorsNez.Scenes
                 .AddCollider(12f)
                 .Build();
 
-            evade1._flee.SteeringEntity = entity;
-
             var entity2 = new SteeringBuilder(new Vector2(256, 128), leader)
                 .SetPhysicalParams(_params)
                 .AddBehavior(leaderFollowingBehavior2)
-                .AddBehavior(evade2, args => IsOnLeaderSight(leader, args.Entity, GetLeaderAhead(leader, leaderFollowingBehavior2.LeaderBehindDist), leaderFollowingBehavior2.LeaderSightRadius))
+                .AddBehavior(new Evade(), args => IsOnLeaderSight(leader, args.Entity, GetLeaderAhead(leader, leaderFollowingBehavior2.LeaderBehindDist), leaderFollowingBehavior2.LeaderSightRadius))
                 .AddBehavior(new Separation(CheckNearestFunc, 50f, 2f) { IsAdditive = true })
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
-
-            evade2._flee.SteeringEntity = entity2;
 
             var entity3 = new SteeringBuilder(new Vector2(256, 256), leader)
                 .SetPhysicalParams(_params)
                 .AddBehavior(leaderFollowingBehavior3)
-                .AddBehavior(evade3, args => IsOnLeaderSight(leader, args.Entity, GetLeaderAhead(leader, leaderFollowingBehavior3.LeaderBehindDist), leaderFollowingBehavior3.LeaderSightRadius))
+                .AddBehavior(new Evade(), args => IsOnLeaderSight(leader, args.Entity, GetLeaderAhead(leader, leaderFollowingBehavior3.LeaderBehindDist), leaderFollowingBehavior3.LeaderSightRadius))
                 .AddBehavior(new Separation(CheckNearestFunc, 50f, 2f) { IsAdditive = true })
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
-
-            evade3._flee.SteeringEntity = entity3;
 
             Core.Scene.AddEntity(leader);
             Core.Scene.AddEntity(entity);

@@ -17,8 +17,6 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
 
         private Vector2 _behind, _ahead;
 
-        private Evade _evade;
-
         public LeaderFollowing(ISteeringEntity leader, float leaderBehindDist, float slowingRadius, float leaderSightRadius)
         {
             Leader = leader;
@@ -31,13 +29,8 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
         {
             base.Initialize();
 
-            _arrival = new Arrival(_slowingRadius);
+            _arrival = new Arrival(_slowingRadius); // TODO: Add as Nested Behavior
             _arrival.SteeringEntity = SteeringEntity;
-
-            _evade = new Evade();
-            _evade.Initialize();
-            _evade.SteeringEntity = SteeringEntity;
-            _evade._flee.SteeringEntity = SteeringEntity;
         }
 
         public override Vector2 Steer(ISteeringTarget target)
