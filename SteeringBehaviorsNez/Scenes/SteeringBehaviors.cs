@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
@@ -407,16 +408,92 @@ namespace SteeringBehaviorsNez.Scenes
         private void AddLeaderFollowing()
         {
             Debug.Log("Adding Leader Following");
-            
-            var entity = new SteeringBuilder(new Vector2(512, 512))
+
+            // The Leader itself
+            var leader = new SteeringBuilder(new Vector2(512, 512))
                 .SetPhysicalParams(_params)
-                .AddBehavior(new LeaderFollowing())
+                .AddBehavior(new Arrival(64f))
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
 
+
+            var leaderFollowingBehavior1 = new LeaderFollowing(leader, 64f, 64f, 30);
+            var leaderFollowingBehavior2 = new LeaderFollowing(leader, 64f, 64f, 30);
+            var leaderFollowingBehavior3 = new LeaderFollowing(leader, 64f, 64f, 30);
+
+            var evade1 = new Evade();
+            var evade2 = new Evade();
+            var evade3 = new Evade();
+
+            // If IsOnLeaderSight => Evade(leader) -> Arrive -> Separation
+            var entity = new SteeringBuilder(new Vector2(128, 128), leader)
+                .SetPhysicalParams(_params)
+                .AddBehavior(leaderFollowingBehavior1)
+                .AddBehavior(evade1, args => IsOnLeaderSight(leader, args.Entity,
+                        GetLeaderAhead(leader, leaderFollowingBehavior1.LeaderBehindDist),
+                        leaderFollowingBehavior1.LeaderSightRadius))
+                .AddBehavior(new Separation(CheckNearestFunc, 50f, 2f) {IsAdditive = true})
+                .UseDefaultRenderer(_defaultTexture)
+                .AddCollider(12f)
+                .Build();
+
+            evade1._flee.SteeringEntity = entity;
+
+            var entity2 = new SteeringBuilder(new Vector2(256, 128), leader)
+                .SetPhysicalParams(_params)
+                .AddBehavior(leaderFollowingBehavior2)
+                .AddBehavior(evade2, args => IsOnLeaderSight(leader, args.Entity, GetLeaderAhead(leader, leaderFollowingBehavior2.LeaderBehindDist), leaderFollowingBehavior2.LeaderSightRadius))
+                .AddBehavior(new Separation(CheckNearestFunc, 50f, 2f) { IsAdditive = true })
+                .UseDefaultRenderer(_defaultTexture)
+                .AddCollider(12f)
+                .Build();
+
+            evade2._flee.SteeringEntity = entity2;
+
+            var entity3 = new SteeringBuilder(new Vector2(256, 256), leader)
+                .SetPhysicalParams(_params)
+                .AddBehavior(leaderFollowingBehavior3)
+                .AddBehavior(evade3, args => IsOnLeaderSight(leader, args.Entity, GetLeaderAhead(leader, leaderFollowingBehavior3.LeaderBehindDist), leaderFollowingBehavior3.LeaderSightRadius))
+                .AddBehavior(new Separation(CheckNearestFunc, 50f, 2f) { IsAdditive = true })
+                .UseDefaultRenderer(_defaultTexture)
+                .AddCollider(12f)
+                .Build();
+
+            evade3._flee.SteeringEntity = entity3;
+
+            Core.Scene.AddEntity(leader);
             Core.Scene.AddEntity(entity);
+            Core.Scene.AddEntity(entity2);
+            Core.Scene.AddEntity(entity3);
         }
+
+        private Vector2 GetLeaderAhead(ISteeringEntity leader, float leaderBehindDist)
+        {
+            var dv = leader.Velocity;
+            dv.Normalize();
+            dv *= leaderBehindDist;
+            return leader.Position + dv;
+        }
+
+        private bool IsOnLeaderSight(ISteeringEntity leader, ISteeringEntity entity, Vector2 leaderAhead, float leaderSightRadius)
+        {
+            return Vector2.Distance(leaderAhead, entity.Position) <= leaderSightRadius ||
+                   Vector2.Distance(leader.Position, entity.Position) <= leaderSightRadius;
+        }
+
+        private IEnumerable<ISteeringEntity> CheckNearestFunc(Separation arg)
+        {
+            var entities = Core.Scene.Entities.EntitiesWithTag(123);
+            var self = arg.Entity;
+
+            foreach (var entity in entities)
+            {
+                if (entity != self && Vector2.Distance(entity.Position, self.Position) <= arg.SeparationRadius)
+                    yield return entity as ISteeringEntity;
+            }
+        }
+
         private void AddQueue()
         {
             Debug.Log("Adding Queue");

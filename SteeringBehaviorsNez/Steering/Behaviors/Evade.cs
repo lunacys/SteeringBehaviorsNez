@@ -4,7 +4,7 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
 {
     public class Evade : SteeringComponentBase
     {
-        private Flee _flee;
+        public Flee _flee;
 
         public override void Initialize()
         {
@@ -12,6 +12,7 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
 
             _flee = new Flee();
             _flee.SteeringEntity = SteeringEntity;
+            _flee.Initialize();
         }
 
         public override Vector2 Steer(ISteeringTarget target)

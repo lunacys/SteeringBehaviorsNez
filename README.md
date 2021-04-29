@@ -14,10 +14,11 @@ The list of currently implemented behaviors:
  - Evade
  - Collision Avoidance
  - Path Following
+ - Leader Following
+ - Separation
 
 To implement:
 
- - Leader Following
  - Queue
 
 ## How to build & run
