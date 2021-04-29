@@ -14,6 +14,8 @@ namespace SteeringBehaviorsNez.Steering
 
         public Predicate<ConditionArgs> Condition { get; set; }
 
+        public ISteeringBehavior NestedBehavior { get; set; }
+
         public override void Initialize()
         {
             base.Initialize();

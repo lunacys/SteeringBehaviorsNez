@@ -47,6 +47,15 @@ namespace SteeringBehaviorsNez.Steering
             return this;
         }
 
+        public SteeringBuilder AddNestedBehavior(ISteeringBehavior behavior, ISteeringBehavior nestedBehavior, Predicate<ConditionArgs> condition = null)
+        {
+            behavior.NestedBehavior = nestedBehavior;
+
+            AddBehavior(behavior, condition);
+
+            return this;
+        }
+
         public static bool ApproachCircleCondition(ConditionArgs args)
         {
             return Vector2.Distance(args.Target.Position, args.Entity.Position) < 6f;

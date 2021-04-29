@@ -8,5 +8,6 @@ namespace SteeringBehaviorsNez.Steering
         ISteeringEntity SteeringEntity { get; set; } 
         Vector2 Steer(ISteeringTarget target);
         Predicate<ConditionArgs> Condition { get; set; }
+        ISteeringBehavior NestedBehavior { get; set; }
     }
 }

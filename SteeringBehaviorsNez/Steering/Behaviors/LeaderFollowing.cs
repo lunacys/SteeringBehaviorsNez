@@ -8,20 +8,17 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
         public ISteeringEntity Leader { get; set; }
         [Inspectable]
         public float LeaderBehindDist { get; set; }
-
+        [Inspectable]
         public float LeaderSightRadius { get; set; }
-
-        private float _slowingRadius;
 
         private Arrival _arrival;
 
         private Vector2 _behind, _ahead;
 
-        public LeaderFollowing(ISteeringEntity leader, float leaderBehindDist, float slowingRadius, float leaderSightRadius)
+        public LeaderFollowing(ISteeringEntity leader, float leaderBehindDist, float leaderSightRadius)
         {
             Leader = leader;
             LeaderBehindDist = leaderBehindDist;
-            _slowingRadius = slowingRadius;
             LeaderSightRadius = leaderSightRadius;
         }
 
@@ -29,7 +26,7 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
         {
             base.Initialize();
 
-            _arrival = new Arrival(_slowingRadius); // TODO: Add as Nested Behavior
+            _arrival = new Arrival(16f); // TODO: Add as Nested Behavior
             _arrival.SteeringEntity = SteeringEntity;
         }
 
@@ -48,7 +45,9 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
             //if (IsOnLeaderSight(_ahead))
             //    force += _evade.Steer(Leader as ISteeringTarget);
 
-           return force + _arrival.Steer((Vector2SteeringTarget) _behind);
+            ISteeringBehavior nestedBehavior = NestedBehavior ?? _arrival;
+
+            return force + nestedBehavior.Steer((Vector2SteeringTarget) _behind);
         }
 
         private bool IsOnLeaderSight(Vector2 leaderAhead)
@@ -60,7 +59,6 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
         public override void DebugRender(Batcher batcher)
         {
             batcher.DrawCircle(_behind, 8f, Color.Green);
-            batcher.DrawCircle(_behind, _slowingRadius, Color.GreenYellow);
         }
     }
 }

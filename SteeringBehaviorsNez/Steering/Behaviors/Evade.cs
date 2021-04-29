@@ -14,7 +14,9 @@ namespace SteeringBehaviorsNez.Steering.Behaviors
             else 
                 futurePos = target.Position;
 
-            return BehaviorMath.Flee((Vector2SteeringTarget) futurePos, SteeringEntity);
+            return NestedBehavior == null
+                ? BehaviorMath.Flee((Vector2SteeringTarget) futurePos, SteeringEntity)
+                : NestedBehavior.Steer((Vector2SteeringTarget) futurePos);
         }
     }
 }
