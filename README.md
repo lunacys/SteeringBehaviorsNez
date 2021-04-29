@@ -16,9 +16,6 @@ The list of currently implemented behaviors:
  - Path Following
  - Leader Following
  - Separation
-
-To implement:
-
  - Queue
 
 ## How to build & run
@@ -44,10 +41,6 @@ Although this project currently uses some of awesome Nez features (ImGui debug l
 ## Notes
 
 Please note that this project is heavily under development and there may be some huge API changes. Take code with care.
-
-## Features to implement/architecture stuff
-
-Steering behaviors should be conditional. For example: flee from the mouse cursor only if it is in some kind of range, etc. These conditions should not be hard-coded (which it currently is).
 
 ## Screenshots
 

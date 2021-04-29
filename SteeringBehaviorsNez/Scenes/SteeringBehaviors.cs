@@ -237,6 +237,8 @@ namespace SteeringBehaviorsNez.Scenes
             {
                 ImGui.TextWrapped(
                     "Queue: process of standing in line, forming a row of characters that are patiently waiting to arrive somewhere");
+                ImGui.DragFloat("Max Queue Ahead", ref _maxQueueAhead);
+                ImGui.DragFloat("Max Queue Radius", ref _maxQueueRadius);
                 if (ImGui.Button("Queue"))
                 {
                     AddQueue();
@@ -490,13 +492,41 @@ namespace SteeringBehaviorsNez.Scenes
             }
         }
 
+        private ISteeringEntity GetNeighborAhead(ISteeringEntity baseEntity, float maxQueueAhead, float maxQueueRadius)
+        {
+            var qa = baseEntity.Velocity;
+            if (qa != Vector2.Zero)
+                qa.Normalize();
+            qa *= maxQueueAhead;
+
+            var ahead = baseEntity.Position + qa;
+
+            var entities = Core.Scene.Entities.EntitiesWithTag(123);
+            foreach (var entity in entities)
+            {
+                var d = Vector2.Distance(ahead, entity.Position);
+                if (entity != baseEntity && d <= maxQueueRadius)
+                {
+                    return entity as ISteeringEntity;
+                }
+            }
+
+            return null;
+        }
+
+        float _maxQueueAhead = 32f;
+        float _maxQueueRadius = 32f;
+
         private void AddQueue()
         {
             Debug.Log("Adding Queue");
-            
+
             var entity = new SteeringBuilder(new Vector2(512, 512))
                 .SetPhysicalParams(_params)
-                .AddBehavior(new Queue())
+                .AddBehavior(new Seek())
+                .AddBehavior(new CollisionAvoidance(64f, 32f))
+                .AddBehavior(new Queue(e => GetNeighborAhead(e, _maxQueueAhead, _maxQueueRadius), _maxQueueRadius))
+                .AddBehavior(new Separation(separation => CheckNearestFunc(separation), 30f, 240f))
                 .UseDefaultRenderer(_defaultTexture)
                 .AddCollider(12f)
                 .Build();
